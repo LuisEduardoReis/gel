@@ -1,0 +1,105 @@
+package net.luisreis.gel.level;
+
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import net.luisreis.gel.Assets;
+import net.luisreis.gel.GameScreen;
+import net.luisreis.gel.ecs.entities.Entity;
+import net.luisreis.gel.ecs.entities.Player;
+import net.luisreis.gel.ecs.systems.Systems;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import static net.luisreis.gel.level.TileType.EMPTY_TILE;
+import static net.luisreis.gel.level.TileType.getTileType;
+
+public class Level {
+
+    public GameScreen gameScreen;
+
+    public List<Entity> entities;
+    public Systems entitySystems;
+    public Entity player;
+
+    public int width, height;
+    public Tile[] tiles;
+    public Tile[] overlayTiles;
+    public Tile boundaryTile;
+
+    public Level(GameScreen gameScreen) {
+        this.gameScreen = gameScreen;
+
+        this.entities = new LinkedList<>();
+        this.entitySystems = new Systems();
+        this.player = this.addEntity(Player.instance(this));
+
+        this.width = 16;
+        this.height = 16;
+
+        this.tiles = new Tile[this.width * this.height];
+        this.overlayTiles = new Tile[this.width * this.height];
+        for (int i = 0; i < this.width * this.height; i++) {
+            this.tiles[i] = new Tile(Math.random() > 0.5 ? getTileType("empty") : getTileType("test"));
+            this.overlayTiles[i] = new Tile(null);
+        }
+        this.boundaryTile = new Tile(getTileType("empty"));
+    }
+
+    private Entity addEntity(Entity entity) {
+        this.entities.add(entity);
+        return entity;
+    }
+
+    public void update(float delta) {
+        this.entitySystems.update(this.entities, delta);
+    }
+
+    public void renderSprites(SpriteBatch spriteBatch) {
+        for (int y = 0; y < this.height; y++) {
+            for (int x = 0; x < this.width; x++) {
+                Tile tile = this.getTile(x, y);
+                if (tile.type != EMPTY_TILE) spriteBatch.draw(Assets.getTileTextureById(tile.type.id), x, y, 1, 1);
+
+                Tile overlayTile = this.getTileOverlay(x, y);
+                if (overlayTile.type != null) spriteBatch.draw(Assets.getTileTextureById(overlayTile.type.id), x, y, 1, 1);
+            }
+        }
+
+        this.entitySystems.renderSprites(this.entities, spriteBatch);
+    }
+
+    public void renderShapes(ShapeRenderer shapeRenderer) {
+        /*for (int y = 0; y < this.height; y++) {
+            for (int x = 0; x < this.width; x++) {
+                Tile tile = this.getTile(x,y);
+                shapeRenderer.setColor(tile.type.solid ? Color.BLACK : Color.GRAY);
+                shapeRenderer.rect(x, y, 1,1);
+            }
+        }*/
+
+        this.entitySystems.renderShapes(this.entities, shapeRenderer);
+    }
+
+    public void renderDebug(ShapeRenderer shapeRenderer) {
+    }
+
+    public Tile getTile(int x, int y) {
+        if (x < 0 || x >= this.width || y < 0 || y >= this.height) return this.boundaryTile;
+        return this.tiles[y * this.width + x];
+    }
+
+    public Tile getTile(float x, float y) {
+        return getTile((int) Math.floor(x), (int) Math.floor(y));
+    }
+
+    public Tile getTileOverlay(int x, int y) {
+        if (x < 0 || x >= this.width || y < 0 || y >= this.height) return this.boundaryTile;
+        return this.overlayTiles[y * this.width + x];
+    }
+
+    public Tile getTileOverlay(float x, float y) {
+        return getTileOverlay((int) Math.floor(x), (int) Math.floor(y));
+    }
+
+}
