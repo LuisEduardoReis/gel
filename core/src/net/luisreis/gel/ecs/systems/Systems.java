@@ -8,18 +8,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class Systems {
-    public Collection<System> systems;
+    public Collection<AbstractSystem> systems;
 
     public Systems() {
         this.systems = new ArrayList<>();
 
         this.systems.add(new PlayerSystem());
         this.systems.add(new SpriteSystem());
+        this.systems.add(new BulletSystem());
+        this.systems.add(new VelocitySystem());
     }
 
     public void update(Collection<Entity> entities, float delta) {
-        for (System system : this.systems) {
-            if (!system.hasUpdateVisitor) continue;
+        for (AbstractSystem system : this.systems) {
             for (Entity entity : entities) {
                 system.visitUpdate(entity, delta);
             }
@@ -27,8 +28,7 @@ public class Systems {
     }
 
     public void renderSprites(Collection<Entity> entities, SpriteBatch spriteBatch) {
-        for (System system : this.systems) {
-            if (!system.hasSpriteBatchVisitor) continue;
+        for (AbstractSystem system : this.systems) {
             for (Entity entity : entities) {
                 system.visitSpriteBatch(entity, spriteBatch);
             }
@@ -36,8 +36,7 @@ public class Systems {
     }
 
     public void renderShapes(Collection<Entity> entities, ShapeRenderer shapeRenderer) {
-        for (System system : this.systems) {
-            if (!system.hasShapeRendererVisitor) continue;
+        for (AbstractSystem system : this.systems) {
             for (Entity entity : entities) {
                 system.visitShapeRenderer(entity, shapeRenderer);
             }

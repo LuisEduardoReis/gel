@@ -1,10 +1,7 @@
 package net.luisreis.gel.ecs.systems;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Affine2;
-import net.luisreis.gel.Util;
 import net.luisreis.gel.ecs.components.Component;
 import net.luisreis.gel.ecs.components.PositionComponent;
 import net.luisreis.gel.ecs.components.SpriteComponent;
@@ -15,9 +12,9 @@ import net.luisreis.gel.sprites.SpriteState;
 
 import java.util.Collections;
 
-public class SpriteSystem extends System {
+public class SpriteSystem extends AbstractSystem {
     protected SpriteSystem() {
-        super(Collections.<Class<? extends Component>>singletonList(SpriteComponent.class), true, true, false);
+        super(Collections.singletonList(SpriteComponent.class));
     }
 
     @Override

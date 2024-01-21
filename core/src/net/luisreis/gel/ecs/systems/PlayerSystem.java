@@ -2,16 +2,15 @@ package net.luisreis.gel.ecs.systems;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import net.luisreis.gel.ecs.components.Component;
-import net.luisreis.gel.ecs.components.PlayerComponent;
-import net.luisreis.gel.ecs.components.PositionComponent;
+import net.luisreis.gel.ecs.components.*;
 import net.luisreis.gel.ecs.entities.Entity;
+import net.luisreis.gel.ecs.entities.TestBullet;
 
 import java.util.Collections;
 
-public class PlayerSystem extends System {
+public class PlayerSystem extends AbstractSystem {
     protected PlayerSystem() {
-        super(Collections.<Class<? extends Component>>singletonList(PlayerComponent.class), true, false, false);
+        super(Collections.singletonList(PlayerComponent.class));
     }
 
     @Override
@@ -30,6 +29,13 @@ public class PlayerSystem extends System {
         }
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             position.x += player.speed * delta;
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            Entity bullet = TestBullet.instance(entity.level);
+            bullet.getComponent(PositionComponent.class).set(position.x, position.y);
+            bullet.getComponent(VelocityComponent.class).set(bullet.getComponent(BulletComponent.class).speed, 0);
+            entity.level.addEntity(bullet);
         }
     }
 }
