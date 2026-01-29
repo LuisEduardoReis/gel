@@ -71,10 +71,12 @@ public class Level {
         for (int y = 0; y < this.height; y++) {
             for (int x = 0; x < this.width; x++) {
                 Tile tile = this.getTile(x, y);
-                if (tile.type != EMPTY_TILE) spriteBatch.draw(Assets.getTileTextureById(tile.type.id), x, y, 1, 1);
+                if (tile.type != null && tile.type.texture != null)
+                    spriteBatch.draw(tile.type.texture, x, y, 1, 1);
 
                 Tile overlayTile = this.getTileOverlay(x, y);
-                if (overlayTile.type != null) spriteBatch.draw(Assets.getTileTextureById(overlayTile.type.id), x, y, 1, 1);
+                if (overlayTile.type != null && overlayTile.type.texture != null)
+                    spriteBatch.draw(overlayTile.type.texture, x, y, 1, 1);
             }
         }
 
